@@ -55,11 +55,12 @@ class Variable():
             arg._gradient += grad
         return
 
-    def backward(self):
-        topoList = getTopoList(self)
-        self._oneGrad()
-        for variable in topoList:
-            variable._chainRule()
+    def backward(self, first=True):
+        if first:
+            self._oneGrad()
+        self._chainRule()
+        for parent in self._parent():
+            parent.backward(first=False)
         return
     
     def new(self) -> "Variable":
@@ -82,28 +83,3 @@ class Variable():
     
     def item(self) -> object:
         raise NotImplementedError
-    
-def _getTopoChain(var:"Variable") -> Iterable["Variable"]:
-    topoChain = []
-    for parent in var._parent():
-        topoChain.append((var, parent))
-        topoChain += _getTopoChain(parent)
-    return topoChain
-
-def getTopoList(var:"Variable") -> Iterable["Variable"]:
-    topoChain = _getTopoChain(var)
-    topoChain = list(set(topoChain))
-    topoDegree = {var:1}
-    for _, parent in topoChain:
-        if not parent in topoDegree:
-            topoDegree[parent] = 0
-        topoDegree[parent] += 1
-    topoList, queue = [], [var]
-    while len(queue) > 0:
-        variable = queue[0]
-        queue += variable._parent()
-        topoDegree[variable] -= 1
-        if topoDegree[variable] == 0:
-            topoList.append(variable)
-        del queue[0]
-    return topoList

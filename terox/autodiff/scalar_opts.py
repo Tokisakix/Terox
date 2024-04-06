@@ -102,7 +102,7 @@ class Neg(VarFunction):
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
         (a,) = args
         a_grad = -grad
-        return a_grad
+        return (a_grad,)
 
 class Max(VarFunction):
     def __init__(self) -> None:
@@ -203,7 +203,7 @@ class Abs(VarFunction):
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
         (a,) = args
         a_grad = grad if a.item() >= 0.0 else -grad
-        return a_grad
+        return (a_grad,)
 
 class Exp(VarFunction):
     def __init__(self) -> None:
@@ -219,7 +219,7 @@ class Exp(VarFunction):
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
         (a,) = args
         a_grad = grad * exp(a.item())
-        return a_grad
+        return (a_grad,)
 
 class Log(VarFunction):
     def __init__(self) -> None:
@@ -235,7 +235,7 @@ class Log(VarFunction):
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
         (a,) = args
         a_grad = grad / a.item()
-        return a_grad
+        return (a_grad,)
 
 class Relu(VarFunction):
     def __init__(self) -> None:
@@ -251,7 +251,7 @@ class Relu(VarFunction):
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
         (a,) = args
         a_grad = grad if a.item() >= 0.0 else 0.0
-        return a_grad
+        return (a_grad,)
 
 class Sigmoid(VarFunction):
     def __init__(self) -> None:
@@ -268,7 +268,7 @@ class Sigmoid(VarFunction):
         (a,) = args
         sigmoid = 1.0 / (1.0 + exp(-a.item()))
         a_grad = grad * sigmoid * (1.0 - sigmoid)
-        return a_grad
+        return (a_grad,)
 
 class Tanh(VarFunction):
     def __init__(self) -> None:
@@ -285,4 +285,4 @@ class Tanh(VarFunction):
         (a,) = args
         tanh = (exp(a.item()) - exp(-a.item())) / (exp(a.item()) + exp(-a.item()))
         a_grad = grad * (1.0 - tanh ** 2)
-        return a_grad
+        return (a_grad,)
