@@ -16,10 +16,6 @@ def div(a:float, b:float) -> float:
     res = a / b
     return res
 
-def inv(a:float) -> float:
-    res = 1.0 / a
-    return res
-
 def neg(a:float) -> float:
     res = -a
     return res

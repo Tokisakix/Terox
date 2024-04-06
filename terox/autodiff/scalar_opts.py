@@ -2,9 +2,8 @@ from typing import Iterable
 
 from terox.autodiff.variable import Variable
 
-from .variable import VarFunction, VarHistory
-from .scalar import Scalar
-from .function import add, sub, mul, div, inv, neg, max, min, eq, lt, gt, abs, exp, log, relu
+from .variable import VarFunction, VarHistory, Variable
+from .function import add, sub, mul, div, neg, max, min, eq, lt, gt, abs, exp, log, relu
 
 class ScalarOptsBackend():
     def __init__(self) -> None:
@@ -12,7 +11,6 @@ class ScalarOptsBackend():
         self.Sub:VarFunction = Sub()
         self.Mul:VarFunction = Mul()
         self.Div:VarFunction = Div()
-        self.Inv:VarFunction = Inv()
         self.Neg:VarFunction = Neg()
         self.Max:VarFunction = Max()
         self.Min:VarFunction = Min()
@@ -32,10 +30,10 @@ class Add(VarFunction):
         super().__init__()
         return
     
-    def _forward(self, a:Scalar, b:Scalar) -> Scalar:
-        _item = add(a._item, b._item)
+    def _forward(self, a:Variable, b:Variable) -> Variable:
+        _item = add(a.item(), b.item())
         _history = VarHistory(self, (a, b))
-        res = Scalar(_item, _history, None)
+        res = a.new(_item, _history, None)
         return res
     
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -47,10 +45,10 @@ class Sub(VarFunction):
         super().__init__()
         return
     
-    def _forward(self, a:Scalar, b:Scalar) -> Scalar:
-        _item = sub(a._item, b._item)
+    def _forward(self, a:Variable, b:Variable) -> Variable:
+        _item = sub(a.item(), b.item())
         _history = VarHistory(self, (a, b))
-        res = Scalar(_item, _history, None)
+        res = a.new(_item, _history, None)
         return res
     
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -62,10 +60,10 @@ class Mul(VarFunction):
         super().__init__()
         return
     
-    def _forward(self, a:Scalar, b:Scalar) -> Scalar:
-        _item = mul(a._item, b._item)
+    def _forward(self, a:Variable, b:Variable) -> Variable:
+        _item = mul(a.item(), b.item())
         _history = VarHistory(self, (a, b))
-        res = Scalar(_item, _history, None)
+        res = a.new(_item, _history, None)
         return res
     
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -78,10 +76,10 @@ class Div(VarFunction):
         super().__init__()
         return
     
-    def _forward(self, a:Scalar, b:Scalar) -> Scalar:
-        _item = div(a._item, b._item)
+    def _forward(self, a:Variable, b:Variable) -> Variable:
+        _item = div(a.item(), b.item())
         _history = VarHistory(self, (a, b))
-        res = Scalar(_item, _history, None)
+        res = a.new(_item, _history, None)
         return res
     
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -90,31 +88,15 @@ class Div(VarFunction):
         b_grad = -grad * a.item() / (b.item() ** 2)
         return a_grad, b_grad
 
-class Inv(VarFunction):
-    def __init__(self) -> None:
-        super().__init__()
-        return
-    
-    def _forward(self, a:Scalar) -> Scalar:
-        _item = inv(a._item)
-        _history = VarHistory(self, (a,))
-        res = Scalar(_item, _history, None)
-        return res
-    
-    def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
-        (a,) = args
-        a_grad = -grad / (a.item() ** 2)
-        return a_grad
-
 class Neg(VarFunction):
     def __init__(self) -> None:
         super().__init__()
         return
     
-    def _forward(self, a:Scalar) -> Scalar:
-        _item = neg(a._item)
+    def _forward(self, a:Variable) -> Variable:
+        _item = neg(a.item())
         _history = VarHistory(self, (a,))
-        res = Scalar(_item, _history, None)
+        res = a.new(_item, _history, None)
         return res
     
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -127,10 +109,10 @@ class Max(VarFunction):
         super().__init__()
         return
     
-    def _forward(self, a:Scalar, b:Scalar) -> Scalar:
-        _item = max(a._item, b._item)
+    def _forward(self, a:Variable, b:Variable) -> Variable:
+        _item = max(a.item(), b.item())
         _history = VarHistory(self, (a, b))
-        res = Scalar(_item, _history,  None)
+        res = a.new(_item, _history,  None)
         return res
     
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -144,10 +126,10 @@ class Min(VarFunction):
         super().__init__()
         return
     
-    def _forward(self, a:Scalar, b:Scalar) -> Scalar:
-        _item = min(a._item, b._item)
+    def _forward(self, a:Variable, b:Variable) -> Variable:
+        _item = min(a.item(), b.item())
         _history = VarHistory(self, (a, b))
-        res = Scalar(_item, _history, None)
+        res = a.new(_item, _history, None)
         return res
     
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -161,10 +143,10 @@ class Eq(VarFunction):
         super().__init__()
         return
     
-    def _forward(self, a:Scalar, b:Scalar) -> Scalar:
-        _item = eq(a._item, b._item)
+    def _forward(self, a:Variable, b:Variable) -> Variable:
+        _item = eq(a.item(), b.item())
         _history = VarHistory(self, (a, b))
-        res = Scalar(_item, _history, None)
+        res = a.new(_item, _history, None)
         return res
     
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -178,10 +160,10 @@ class Lt(VarFunction):
         super().__init__()
         return
     
-    def _forward(self, a:Scalar, b:Scalar) -> Scalar:
-        _item = lt(a._item, b._item)
+    def _forward(self, a:Variable, b:Variable) -> Variable:
+        _item = lt(a.item(), b.item())
         _history = VarHistory(self, (a, b))
-        res = Scalar(_item, _history, None)
+        res = a.new(_item, _history, None)
         return res
     
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -195,10 +177,10 @@ class Gt(VarFunction):
         super().__init__()
         return
     
-    def _forward(self, a:Scalar, b:Scalar) -> Scalar:
-        _item = gt(a._item, b._item)
+    def _forward(self, a:Variable, b:Variable) -> Variable:
+        _item = gt(a.item(), b.item())
         _history = VarHistory(self, (a, b))
-        res = Scalar(_item, _history, None)
+        res = a.new(_item, _history, None)
         return res
     
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -212,10 +194,10 @@ class Abs(VarFunction):
         super().__init__()
         return
     
-    def _forward(self, a:Scalar) -> Scalar:
-        _item = abs(a._item)
+    def _forward(self, a:Variable) -> Variable:
+        _item = abs(a.item())
         _history = VarHistory(self, (a,))
-        res = Scalar(_item, _history, None)
+        res = a.new(_item, _history, None)
         return res
     
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -228,10 +210,10 @@ class Exp(VarFunction):
         super().__init__()
         return
     
-    def _forward(self, a:Scalar) -> Scalar:
-        _item = exp(a._item)
+    def _forward(self, a:Variable) -> Variable:
+        _item = exp(a.item())
         _history = VarHistory(self, (a,))
-        res = Scalar(_item, _history, None)
+        res = a.new(_item, _history, None)
         return res
     
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -244,10 +226,10 @@ class Log(VarFunction):
         super().__init__()
         return
     
-    def _forward(self, a:Scalar) -> Scalar:
-        _item = log(a._item)
+    def _forward(self, a:Variable) -> Variable:
+        _item = log(a.item())
         _history = VarHistory(self, (a,))
-        res = Scalar(_item, _history, None)
+        res = a.new(_item, _history, None)
         return res
     
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -260,10 +242,10 @@ class Relu(VarFunction):
         super().__init__()
         return
     
-    def _forward(self, a:Scalar) -> Scalar:
-        _item = relu(a._item)
+    def _forward(self, a:Variable) -> Variable:
+        _item = relu(a.item())
         _history = VarHistory(self, (a,))
-        res = Scalar(_item, _history, None)
+        res = a.new(_item, _history, None)
         return res
     
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -276,10 +258,10 @@ class Sigmoid(VarFunction):
         super().__init__()
         return
     
-    def _forward(self, a:Scalar) -> Scalar:
-        _item = 1.0 / (1.0 + exp(-a._item))
+    def _forward(self, a:Variable) -> Variable:
+        _item = 1.0 / (1.0 + exp(-a.item()))
         _history = VarHistory(self, (a,))
-        res = Scalar(_item, _history, None)
+        res = a.new(_item, _history, None)
         return res
     
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -293,10 +275,10 @@ class Tanh(VarFunction):
         super().__init__()
         return
     
-    def _forward(self, a:Scalar) -> Scalar:
-        _item = (exp(a._item) - exp(-a._item)) / (exp(a._item) + exp(-a._item))
+    def _forward(self, a:Variable) -> Variable:
+        _item = (exp(a.item()) - exp(-a.item())) / (exp(a.item()) + exp(-a.item()))
         _history = VarHistory(self, (a,))
-        res = Scalar(_item, _history, None)
+        res = a.new(_item, _history, None)
         return res
     
     def _backward(self, grad:float, args: Iterable[Variable]) -> Iterable[Variable]:

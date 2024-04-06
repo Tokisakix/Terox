@@ -1,7 +1,7 @@
 import pytest
 import math
 
-from terox.autodiff.function import add, sub, mul, div, inv, max, min, eq, lt, gt, abs, exp, log, relu
+from terox.autodiff.function import add, sub, mul, div, max, min, eq, lt, gt, abs, exp, log, relu
 
 @pytest.mark.test_function
 def test_add(a:float=2.0, b:float=3.0) -> None:
@@ -28,13 +28,6 @@ def test_mul(a:float=2.0, b:float=3.0) -> None:
 def test_div(a:float=2.0, b:float=3.0) -> None:
     res = div(a, b)
     ref = a / b
-    assert res == ref
-    return
-
-@pytest.mark.test_function
-def test_inv(a:float=2.0) -> None:
-    res = inv(a)
-    ref = 1.0 / a
     assert res == ref
     return
 

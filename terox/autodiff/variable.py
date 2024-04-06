@@ -61,6 +61,9 @@ class Variable():
         for variable in topoList:
             variable._chainRule()
         return
+    
+    def new(self) -> "Variable":
+        raise NotImplementedError
 
     def _zeroGrad(self) -> None:
         raise NotImplementedError
