@@ -1,0 +1,1 @@
+__version__ = "Terox v0.1 by Tokisakix."
