@@ -7,7 +7,7 @@ class VarFunction():
     def _forward(self, args:Iterable["Variable"]) -> "Variable":
         raise NotImplementedError
 
-    def _backward(self, grad:"Variable", args:Iterable["Variable"]) -> Iterable["Variable"]:
+    def _backward(self, grad:"object", args:Iterable["Variable"]) -> Iterable["Variable"]:
         raise NotImplementedError
 
 class VarHistory():
@@ -23,9 +23,9 @@ class VarHistory():
 class Variable():
 
     _history: Optional[VarHistory]
-    _gradient: Optional["Variable"]
+    _gradient: Optional[object]
 
-    def __init__(self, _history:Optional[VarHistory]=None, _gradient:Optional["Variable"]=None) -> None:
+    def __init__(self, _history:Optional[VarHistory]=None, _gradient:Optional[object]=None) -> None:
         self._history = _history
         self._gradient = _gradient
         if self._gradient == None:
@@ -35,7 +35,7 @@ class Variable():
     def _parent(self) -> Iterable["Variable"]:
         if self._is_leaf():
             return []
-        parent = self._history._args
+        parent = list(self._history._args)
         return parent
 
     def _is_leaf(self) -> bool:
@@ -54,7 +54,7 @@ class Variable():
 
     def backward(self):
         topoList = getTopoList(self)
-        self._gradient = self._oneGrad()
+        self._oneGrad()
         for variable in topoList:
             variable._chainRule()
         return
@@ -65,7 +65,16 @@ class Variable():
     def _oneGrad(self) -> None:
         raise NotImplementedError
 
+    def zero(self) -> "Variable":
+        raise NotImplementedError
+
+    def one(self) -> "Variable":
+        raise NotImplementedError
+
     def detach(self) -> "Variable":
+        raise NotImplementedError
+    
+    def item(self) -> object:
         raise NotImplementedError
     
 def _getTopoChain(var:"Variable") -> Iterable["Variable"]:
