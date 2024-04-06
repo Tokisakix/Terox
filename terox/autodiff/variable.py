@@ -1,8 +1,11 @@
-from typing import Iterable, Optional
+from typing import Any, Iterable, Optional
 
 class VarFunction():
     def __init__(self) -> None:
         return
+    
+    def __call__(self, *args: Any, **kwds: Any) -> "Variable":
+        return self._forward(*args, **kwds)
 
     def _forward(self, args:Iterable["Variable"]) -> "Variable":
         raise NotImplementedError

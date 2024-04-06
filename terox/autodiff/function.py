@@ -20,6 +20,10 @@ def inv(a:float) -> float:
     res = 1.0 / a
     return res
 
+def neg(a:float) -> float:
+    res = -a
+    return res
+
 def max(a:float, b:float) -> float:
     res = a if a > b else b
     return res
