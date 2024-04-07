@@ -4,6 +4,8 @@
 
 **Terox is an open source tiny Deep Learning System based on Python, Cython and CUDA.**
 
+![img](asset/terox.png)
+
 Terox is a tiny Python package that provides some features:
 - [x] Support automatic differentiation.
 - [ ] Provides convenient tensor calculation.

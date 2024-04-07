@@ -4,6 +4,8 @@
 
 **Terox 是一个基于 Python、Cython 和 CUDA 的开源微型深度学习系统。**
 
+![img](asset/terox.png)
+
 Terox 是一个很精简的 Python 包，它提供了一些特性:
 - [x] 支持自动微分。
 - [ ] 提供方便的张量计算。
