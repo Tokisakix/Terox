@@ -25,6 +25,7 @@ class VarHistory():
 
 class Variable():
 
+    _id:int
     _history: Optional[VarHistory]
     _gradient: Optional[object]
 
@@ -55,12 +56,11 @@ class Variable():
             arg._gradient += grad
         return
 
-    def backward(self, first=True):
-        if first:
-            self._oneGrad()
-        self._chainRule()
-        for parent in self._parent():
-            parent.backward(first=False)
+    def backward(self):
+        self._oneGrad()
+        TopoList = getTopoList(self)
+        for var in TopoList:
+            var._chainRule()
         return
     
     def new(self) -> "Variable":
@@ -83,3 +83,35 @@ class Variable():
     
     def item(self) -> object:
         raise NotImplementedError
+    
+def _getTopoChain(var:"Variable") -> Iterable["Variable"]:
+    topoChainId = []
+    topoChainVar = []
+    for parent in var._parent():
+        topoChainId.append((var._id, parent._id))
+        topoChainVar.append(parent)
+        temp = _getTopoChain(parent)
+        topoChainId += temp[0]
+        topoChainVar += temp[1]
+    return topoChainId, topoChainVar
+
+def getTopoList(var:"Variable") -> Iterable["Variable"]:
+    topoChainId, topoChainVar = _getTopoChain(var)
+    topoId2Var = {var._id:var}
+    topoId2Degree = {var._id:1}
+    for (_, temp_id), temp_var in zip(topoChainId, topoChainVar):
+        topoId2Var[temp_id] = temp_var
+    topoChainId = list(set(topoChainId))
+    for _, parent_id in topoChainId:
+        if not parent_id in topoId2Degree:
+            topoId2Degree[parent_id] = 0
+        topoId2Degree[parent_id] += 1
+    topoList, queue = [], [var]
+    while len(queue) > 0:
+        variable = queue[0]
+        queue += variable._parent()
+        topoId2Degree[variable._id] -= 1
+        if topoId2Degree[variable._id] == 0:
+            topoList.append(variable)
+        del queue[0]
+    return topoList

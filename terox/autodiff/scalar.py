@@ -1,14 +1,20 @@
-from typing import Optional
+from typing import Iterable, Optional
 
 from .variable import Variable, VarHistory
 from .scalar_opts import ScalarOptsBackend
 
+scalar_count:int = 0
+
 class Scalar(Variable):
 
+    _id: int
     _item: float
 
     def __init__(self, _item:float=None, _history:Optional[VarHistory]=None, _gradient:Optional["Scalar"]=None, _backend:ScalarOptsBackend=ScalarOptsBackend()) -> None:
         super().__init__(_history, _gradient)
+        global scalar_count
+        self._id = scalar_count
+        scalar_count += 1
         if _item == None:
             _item = 0.0
         self._item = float(_item)

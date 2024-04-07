@@ -152,15 +152,15 @@ def test_tanh(a:float=-2.0) -> None:
     return
 
 @pytest.mark.test_scalar_overload
-def test_add_backward() -> None:
+def test_complex_backward() -> None:
     A = Scalar(1.0, None, None)
     B = Scalar(2.0, None, None)
     C = A + B
     D = A + C
     E = (D - C) * (D - C)
     E.backward()
-    assert A._gradient == 5.0
-    assert B._gradient == 2.0
-    assert C._gradient == 1.0
+    assert A._gradient == 2.0
+    assert B._gradient == 0.0
+    assert C._gradient == 0.0
     assert D._gradient == 2.0
     return
