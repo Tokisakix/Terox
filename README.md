@@ -9,7 +9,7 @@
 Terox is a tiny Python package that provides some features:
 - [x] Support automatic differentiation.
 - [ ] Provides convenient tensor calculation.
-- [ ] Control the parameters and the model.
+- [x] Control the parameters and the model.
 - [ ] Provides common computing functions for deep learning.
 - [ ] Provides common deep learning components.
 - [ ] Provides deep learning model optimizer.
@@ -43,3 +43,31 @@ Make sure that everything is installed by running python and then checking. If y
 ```Python
 import terox
 print(terox.__version__) # expect output: "Terox v0.1 by Tokisakix."
+```
+
+## Test
+
+You can test the correctness of the project by running `pytest` in the root directory of the project:
+
+```Shell
+python -m pytest
+```
+
+Pytest tests all modules by default, but you can also run the following commands to do some testing:
+
+```Shell
+python -m pytest -m <test-name>
+```
+
+Where `<test-name>` can select the following test module name:
+
+```Shell
+# autodiff test
+test_function
+test_scalar
+test_scalar_opts
+test_scalar_overload
+
+# module test
+test_module
+```

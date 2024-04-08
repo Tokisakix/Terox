@@ -9,7 +9,7 @@
 Terox 是一个很精简的 Python 包，它提供了一些特性:
 - [x] 支持自动微分。
 - [ ] 提供方便的张量计算。
-- [ ] 便捷控制参数和模型。
+- [x] 便捷控制参数和模型。
 - [ ] 提供深度学习常用的计算函数。
 - [ ] 提供常用的深度学习组件。
 - [ ] 提供深度学习模型优化器。
@@ -43,4 +43,31 @@ python -m pip install -Ue .
 ```Python
 import terox
 print(terox.__version__) # 期望输出: "Terox v0.1 by Tokisakix."
+```
+
+## 测试
+
+你可以在项目根目录下运行 `pytest` 来测试此项目的正确性:
+
+```Shell
+python -m pytest
+```
+
+默认情况下，Pytest 会测试所有的模块，你也可以运行下列命令来进行部分测试:
+
+```Shell
+python -m pytest -m <test-name>
+```
+
+其中 `<test-name>` 可以选择如下测试模块名:
+
+```Shell
+# autodiff test
+test_function
+test_scalar
+test_scalar_opts
+test_scalar_overload
+
+# module test
+test_module
 ```
