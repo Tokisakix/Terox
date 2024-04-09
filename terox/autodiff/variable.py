@@ -27,13 +27,13 @@ class Variable():
 
     _id:int
     _history: Optional[VarHistory]
-    _gradient: Optional[object]
+    _gradient: Optional["Variable"]
+    _require_grad: bool
 
-    def __init__(self, _history:Optional[VarHistory]=None, _gradient:Optional[object]=None) -> None:
+    def __init__(self, _history:Optional[VarHistory]=None, _gradient:Optional["Variable"]=None, _require_grad:bool=True) -> None:
         self._history = _history
         self._gradient = _gradient
-        if self._gradient == None:
-            self._zeroGrad()
+        self._require_grad = _require_grad
         pass
 
     def _parent(self) -> Iterable["Variable"]:
@@ -57,11 +57,18 @@ class Variable():
         return
 
     def backward(self):
-        self._oneGrad()
         TopoList = getTopoList(self)
+        self._oneGrad()
         for var in TopoList:
             var._chainRule()
         return
+    
+    def setRequireGrad(self, _require_grad:bool=True) -> "Variable":
+        self._require_grad = _require_grad
+        return self
+    
+    def getRequireGrad(self) -> bool:
+        return self._require_grad
     
     def new(self) -> "Variable":
         raise NotImplementedError
@@ -82,6 +89,9 @@ class Variable():
         raise NotImplementedError
     
     def item(self) -> object:
+        raise NotImplementedError
+    
+    def __str__(self) -> str:
         raise NotImplementedError
     
 def _getTopoChain(var:"Variable") -> Iterable["Variable"]:
@@ -112,6 +122,7 @@ def getTopoList(var:"Variable") -> Iterable["Variable"]:
         queue += variable._parent()
         topoId2Degree[variable._id] -= 1
         if topoId2Degree[variable._id] == 0:
+            variable._zeroGrad()
             topoList.append(variable)
         del queue[0]
     return topoList

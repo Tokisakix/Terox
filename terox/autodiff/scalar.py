@@ -10,8 +10,8 @@ class Scalar(Variable):
     _id: int
     _item: float
 
-    def __init__(self, _item:float=None, _history:Optional[VarHistory]=None, _gradient:Optional["Scalar"]=None, _backend:ScalarOptsBackend=ScalarOptsBackend()) -> None:
-        super().__init__(_history, _gradient)
+    def __init__(self, _item:float=None, _history:Optional[VarHistory]=None, _gradient:Optional["Scalar"]=None, _require_grad:bool=True, _backend:ScalarOptsBackend=ScalarOptsBackend()) -> None:
+        super().__init__(_history, _gradient, _require_grad)
         global scalar_count
         self._id = scalar_count
         scalar_count += 1
@@ -22,11 +22,11 @@ class Scalar(Variable):
         return
 
     def _zeroGrad(self) -> None:
-        self._gradient = 0.0
+        self._gradient = Scalar(0.0, _require_grad=False)
         return
 
     def _oneGrad(self) -> None:
-        self._gradient = 1.0
+        self._gradient = Scalar(1.0, _require_grad=False)
         return
     
     def new(self, _item:float=None, _history:Optional[VarHistory]=None, _gradient:Optional["Scalar"]=None) -> "Scalar":
@@ -49,11 +49,18 @@ class Scalar(Variable):
             _item=self._item,
             _history=None,
             _gradient=None,
+            _require_grad=self._require_grad,
         )
         return var
 
     def item(self) -> float:
         return self._item
+    
+    def __str__(self) -> str:
+        info = f"<{self.__class__.__name__}({self._item}), grad_fn="
+        info += f"None" if self._history == None else f"{self._history._func.__class__.__name__}"
+        info += ">"
+        return info
     
     def __add__(self, b:"Scalar") -> "Scalar":
         return self._backend.Add(self, b)

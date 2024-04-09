@@ -20,14 +20,14 @@ def test_scalar_init() -> None:
 def test_scalar_zero_grad() -> None:
     a = Scalar(0.0, None, 1.0)
     a._zeroGrad()
-    assert a._gradient == 0.0
+    assert a._gradient == Scalar(0.0)
     return
 
 @pytest.mark.test_scalar
 def test_scalar_one_grad() -> None:
     a = Scalar(0.0, None, 0.0)
     a._oneGrad()
-    assert a._gradient == 1.0
+    assert a._gradient == Scalar(1.0)
     return
 
 @pytest.mark.test_scalar
@@ -46,4 +46,12 @@ def test_scalar_one() -> None:
 def test_scalar_item() -> None:
     a = Scalar(1.0)
     assert a.item() == 1.0
+    return
+
+def test_scalar_str() -> None:
+    a = Scalar(1.0)
+    b = Scalar(2.0)
+    c = a + b
+    assert str(a) == "<Scalar(1.0), grad_fn=None>"
+    assert str(c) == "<Scalar(3.0), grad_fn=Add>"
     return
