@@ -1,4 +1,4 @@
-from typing import Iterable, Optional
+from typing import Optional
 
 from .variable import Variable, VarHistory
 from .scalar_opts import ScalarOptsBackend
@@ -61,6 +61,9 @@ class Scalar(Variable):
         info += f"None" if self._history == None else f"{self._history._func.__class__.__name__}"
         info += ">"
         return info
+    
+    def __repr__(self) -> str:
+        return self.__str__()
     
     def __add__(self, b:"Scalar") -> "Scalar":
         return self._backend.Add(self, b)

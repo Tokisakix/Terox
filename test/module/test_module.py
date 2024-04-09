@@ -29,3 +29,9 @@ def test_module_dict() -> None:
     assert m1.getParmeterDict() == {"p1":p1, "p2":p2}
     assert m2.getParmeterDict() == {"m1.p1":p1, "m1.p2":p2, "p3":p3}
     return
+
+@pytest.mark.test_module
+def test_module_parmeter() -> None:
+    assert m1.parmeters() == [p1, p2]
+    assert m2.parmeters() == [p1, p2, p3]
+    return

@@ -33,5 +33,12 @@ class Module():
         parmeters = dict(getParmeterList(self))
         return parmeters
     
+    def parmeters(self) -> List[Parameter]:
+        parmeters_dict = self.getParmeterDict()
+        parmeters = []
+        for key in parmeters_dict:
+            parmeters.append(parmeters_dict[key])
+        return parmeters 
+    
     def forward(self, *args: Any, **kwds: Any) -> Any:
         raise NotImplementedError

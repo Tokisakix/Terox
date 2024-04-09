@@ -26,6 +26,7 @@ class VarHistory():
 class Variable():
 
     _id:int
+    _item:object
     _history: Optional[VarHistory]
     _gradient: Optional["Variable"]
     _require_grad: bool
