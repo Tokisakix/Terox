@@ -3,16 +3,17 @@ from tqdm import tqdm
 from terox.autodiff import Scalar
 
 from model import ScalarIrisClassifyModel, GD
-from dataset import getIrisDataSet
-from function import softmax, CrossEntropyLoss, argmax
+from dataset import getDataSet
+from function import MSELoss, argmax
 
-EPOCHS = 10
+N      = 100
+EPOCHS = 100
 LR     = 1e-3
 
 if __name__ == "__main__":
-    dataset   = getIrisDataSet()
+    dataset   = getDataSet(N)
     model     = ScalarIrisClassifyModel()
-    criterion = CrossEntropyLoss
+    criterion = MSELoss
     optimizer = GD(model.parmeters(), LR)
 
     for epoch in range(EPOCHS):
@@ -21,13 +22,13 @@ if __name__ == "__main__":
         for inputs, labels in tqdm(dataset):
             inputs = [Scalar(num) for num in inputs]
             outpus = model(inputs)
-            outpus = softmax(outpus)
             optimizer.zero_grad()
             loss   = criterion(outpus, labels)
             loss.backward()
             Loss += loss.item()
             optimizer.step()
 
+            # print(argmax(outpus)[0], labels)
             Acc += 1 if argmax(outpus)[0] == labels else 0
         Loss /= len(dataset)
         Acc /= len(dataset)

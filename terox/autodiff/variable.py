@@ -120,10 +120,10 @@ def getTopoList(var:"Variable") -> Iterable["Variable"]:
     topoList, queue = [], [var]
     while len(queue) > 0:
         variable = queue[0]
-        queue += variable._parent()
         topoId2Degree[variable._id] -= 1
         if topoId2Degree[variable._id] == 0:
             variable._zeroGrad()
             topoList.append(variable)
+            queue += variable._parent()
         del queue[0]
     return topoList

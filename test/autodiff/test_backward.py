@@ -171,6 +171,6 @@ def test_scalar_str() -> None:
     b = Scalar(2.0)
     c = a + b
     c.backward()
-    assert str(a._gradient) == "<Scalar(1.0), grad_fn=None>"
-    assert str(c._gradient) == "<Scalar(1.0), grad_fn=None>"
+    assert str(a._gradient) == "<Scalar(1.0), grad_fn=None, grad=False>"
+    assert str(c._gradient) == "<Scalar(1.0), grad_fn=None, grad=False>"
     return

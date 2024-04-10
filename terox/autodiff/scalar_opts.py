@@ -32,11 +32,13 @@ class Add(VarFunction):
     
     def _forward(self, a:Variable, b:Variable) -> Variable:
         _item = add(a.item(), b.item())
-        _history = VarHistory(self, (a, b)) if a.getRequireGrad() and b.getRequireGrad() == True else None
-        res = a.new(_item, _history, None)
+        _require_grad = a.getRequireGrad() and b.getRequireGrad()
+        _history = VarHistory(self, (a, b)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
+        (a, b) = args
         a_grad, b_grad = grad * grad.new(1.0), grad * grad.new(1.0)
         return a_grad, b_grad
 
@@ -47,8 +49,9 @@ class Sub(VarFunction):
     
     def _forward(self, a:Variable, b:Variable) -> Variable:
         _item = sub(a.item(), b.item())
-        _history = VarHistory(self, (a, b)) if a.getRequireGrad() and b.getRequireGrad() == True else None
-        res = a.new(_item, _history, None)
+        _require_grad = a.getRequireGrad() and b.getRequireGrad()
+        _history = VarHistory(self, (a, b)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -62,8 +65,9 @@ class Mul(VarFunction):
     
     def _forward(self, a:Variable, b:Variable) -> Variable:
         _item = mul(a.item(), b.item())
-        _history = VarHistory(self, (a, b)) if a.getRequireGrad() and b.getRequireGrad() == True else None
-        res = a.new(_item, _history, None)
+        _require_grad = a.getRequireGrad() and b.getRequireGrad()
+        _history = VarHistory(self, (a, b)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -78,8 +82,9 @@ class Div(VarFunction):
     
     def _forward(self, a:Variable, b:Variable) -> Variable:
         _item = div(a.item(), b.item())
-        _history = VarHistory(self, (a, b)) if a.getRequireGrad() and b.getRequireGrad() == True else None
-        res = a.new(_item, _history, None)
+        _require_grad = a.getRequireGrad() and b.getRequireGrad()
+        _history = VarHistory(self, (a, b)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -95,8 +100,9 @@ class Neg(VarFunction):
     
     def _forward(self, a:Variable) -> Variable:
         _item = neg(a.item())
-        _history = VarHistory(self, (a,)) if a.getRequireGrad() == True else None
-        res = a.new(_item, _history, None)
+        _require_grad = a.getRequireGrad()
+        _history = VarHistory(self, (a,)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -111,8 +117,9 @@ class Max(VarFunction):
     
     def _forward(self, a:Variable, b:Variable) -> Variable:
         _item = max(a.item(), b.item())
-        _history = VarHistory(self, (a, b)) if a.getRequireGrad() and b.getRequireGrad() == True else None
-        res = a.new(_item, _history,  None)
+        _require_grad = a.getRequireGrad() and b.getRequireGrad()
+        _history = VarHistory(self, (a, b)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -128,8 +135,9 @@ class Min(VarFunction):
     
     def _forward(self, a:Variable, b:Variable) -> Variable:
         _item = min(a.item(), b.item())
-        _history = VarHistory(self, (a, b)) if a.getRequireGrad() and b.getRequireGrad() == True else None
-        res = a.new(_item, _history, None)
+        _require_grad = a.getRequireGrad() and b.getRequireGrad()
+        _history = VarHistory(self, (a, b)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -145,8 +153,9 @@ class Eq(VarFunction):
     
     def _forward(self, a:Variable, b:Variable) -> Variable:
         _item = eq(a.item(), b.item())
-        _history = VarHistory(self, (a, b)) if a.getRequireGrad() and b.getRequireGrad() == True else None
-        res = a.new(_item, _history, None)
+        _require_grad = a.getRequireGrad() and b.getRequireGrad()
+        _history = VarHistory(self, (a, b)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -162,8 +171,9 @@ class Lt(VarFunction):
     
     def _forward(self, a:Variable, b:Variable) -> Variable:
         _item = lt(a.item(), b.item())
-        _history = VarHistory(self, (a, b)) if a.getRequireGrad() and b.getRequireGrad() == True else None
-        res = a.new(_item, _history, None)
+        _require_grad = a.getRequireGrad() and b.getRequireGrad()
+        _history = VarHistory(self, (a, b)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -179,8 +189,9 @@ class Gt(VarFunction):
     
     def _forward(self, a:Variable, b:Variable) -> Variable:
         _item = gt(a.item(), b.item())
-        _history = VarHistory(self, (a, b)) if a.getRequireGrad() and b.getRequireGrad() == True else None
-        res = a.new(_item, _history, None)
+        _require_grad = a.getRequireGrad() and b.getRequireGrad()
+        _history = VarHistory(self, (a, b)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -196,8 +207,9 @@ class Abs(VarFunction):
     
     def _forward(self, a:Variable) -> Variable:
         _item = abs(a.item())
-        _history = VarHistory(self, (a,)) if a.getRequireGrad() == True else None
-        res = a.new(_item, _history, None)
+        _require_grad = a.getRequireGrad()
+        _history = VarHistory(self, (a,)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -212,8 +224,9 @@ class Exp(VarFunction):
     
     def _forward(self, a:Variable) -> Variable:
         _item = exp(a.item())
-        _history = VarHistory(self, (a,)) if a.getRequireGrad() == True else None
-        res = a.new(_item, _history, None)
+        _require_grad = a.getRequireGrad()
+        _history = VarHistory(self, (a,)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -228,8 +241,9 @@ class Log(VarFunction):
     
     def _forward(self, a:Variable) -> Variable:
         _item = log(a.item())
-        _history = VarHistory(self, (a,)) if a.getRequireGrad() == True else None
-        res = a.new(_item, _history, None)
+        _require_grad = a.getRequireGrad()
+        _history = VarHistory(self, (a,)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -244,8 +258,9 @@ class Relu(VarFunction):
     
     def _forward(self, a:Variable) -> Variable:
         _item = relu(a.item())
-        _history = VarHistory(self, (a,)) if a.getRequireGrad() == True else None
-        res = a.new(_item, _history, None)
+        _require_grad = a.getRequireGrad()
+        _history = VarHistory(self, (a,)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -260,8 +275,9 @@ class Sigmoid(VarFunction):
     
     def _forward(self, a:Variable) -> Variable:
         _item = 1.0 / (1.0 + exp(-a.item()))
-        _history = VarHistory(self, (a,)) if a.getRequireGrad() == True else None
-        res = a.new(_item, _history, None)
+        _require_grad = a.getRequireGrad()
+        _history = VarHistory(self, (a,)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
@@ -277,8 +293,9 @@ class Tanh(VarFunction):
     
     def _forward(self, a:Variable) -> Variable:
         _item = (exp(a.item()) - exp(-a.item())) / (exp(a.item()) + exp(-a.item()))
-        _history = VarHistory(self, (a,)) if a.getRequireGrad() == True else None
-        res = a.new(_item, _history, None)
+        _require_grad = a.getRequireGrad()
+        _history = VarHistory(self, (a,)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:

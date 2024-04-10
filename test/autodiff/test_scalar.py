@@ -52,6 +52,6 @@ def test_scalar_str() -> None:
     a = Scalar(1.0)
     b = Scalar(2.0)
     c = a + b
-    assert str(a) == "<Scalar(1.0), grad_fn=None>"
-    assert str(c) == "<Scalar(3.0), grad_fn=Add>"
+    assert str(a) == "<Scalar(1.0), grad_fn=None, grad=True>"
+    assert str(c) == "<Scalar(3.0), grad_fn=Add, grad=True>"
     return

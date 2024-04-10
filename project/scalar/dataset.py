@@ -1,18 +1,22 @@
-import pandas as pd
 from typing import List
+from random import random
 
-PATH    = "data.csv"
-CLASSES = {
-    "Iris-setosa": 0,
-    "Iris-versicolor": 1,
-    "Iris-virginica": 2,
-}
+DATA = []
 
-def getIrisDataSet() -> List:
-    raw_data = pd.read_csv(PATH).to_numpy()
-    data = []
-    for row in raw_data:
-        feature = (row[:4] - 5) / 2
-        label   = CLASSES[row[4]]
-        data.append((feature, label))
-    return data
+def getDataSet(num:int) -> List:
+    for _ in range(num):
+        x = 0.0
+        y = 0.0
+        if x == 0.0 or y == 0.0:
+            x = random() - 0.5
+            y = random() - 0.5
+        if x > 0 and y > 0:
+            label = 0
+        if x < 0 and y > 0:
+            label = 1
+        if x < 0 and y < 0:
+            label = 2
+        if x > 0 and y < 0:
+            label = 3
+        DATA.append(([x, y], label))
+    return DATA

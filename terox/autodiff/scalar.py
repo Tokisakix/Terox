@@ -29,11 +29,11 @@ class Scalar(Variable):
         self._gradient = Scalar(1.0, _require_grad=False)
         return
     
-    def new(self, _item:float=None, _history:Optional[VarHistory]=None, _gradient:Optional["Scalar"]=None) -> "Scalar":
+    def new(self, _item:float=None, _history:Optional[VarHistory]=None, _gradient:Optional["Scalar"]=None, _require_grad:bool=True) -> "Scalar":
         if _item == None:
             _item = 0.0
         _item = float(_item)
-        res = Scalar(_item, _history, _gradient)
+        res = Scalar(_item, _history, _gradient, _require_grad)
         return res
 
     def zero(self) -> "Scalar":
@@ -59,6 +59,7 @@ class Scalar(Variable):
     def __str__(self) -> str:
         info = f"<{self.__class__.__name__}({self._item}), grad_fn="
         info += f"None" if self._history == None else f"{self._history._func.__class__.__name__}"
+        info += f", grad={self._require_grad}"
         info += ">"
         return info
     

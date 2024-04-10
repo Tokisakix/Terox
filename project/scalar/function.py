@@ -2,21 +2,34 @@ from typing import List
 
 from terox.autodiff import Scalar
 
-def softmax(inputs:List[Scalar]) -> List[Scalar]:
+def Relu(inputs:List[Scalar]) -> List[Scalar]:
+    out = [Scalar(0.0) for _ in range(len(inputs))]
+    for idx in range(len(inputs)):
+        out[idx] = inputs[idx].relu()
+    return out
+
+def Sigmoid(inputs:List[Scalar]) -> List[Scalar]:
+    out = [Scalar(0.0) for _ in range(len(inputs))]
+    for idx in range(len(inputs)):
+        out[idx] = inputs[idx].sigmoid()
+    return out
+
+def Softmax(inputs:List[Scalar]) -> List[Scalar]:
     out = [Scalar(0.0) for _ in range(len(inputs))]
     temp = 0.0
     for scalar in inputs:
-        temp += scalar.item()
+        temp += scalar.exp().item()
     temp = Scalar(temp)
     for idx in range(len(inputs)):
-        out[idx] = inputs[idx] / temp
+        out[idx] = inputs[idx].exp() / temp
     return out
 
-def CrossEntropyLoss(inputs:List[Scalar], labels:int) -> Scalar:
+def MSELoss(inputs:List[Scalar], labels:int) -> Scalar:
     n = len(inputs)
     loss = Scalar(0.0)
     for idx in range(n):
-        loss -= (Scalar(1.0) - inputs[idx]).log() if idx == labels else inputs[idx].log()
+        temp = inputs[idx] - Scalar(1.0 if idx == labels else 0.0)
+        loss += temp * temp / Scalar(2.0)
     loss /= Scalar(n)
     return loss
 

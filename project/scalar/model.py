@@ -3,6 +3,7 @@ from random import random
 
 from terox.autodiff import Scalar
 from terox.module import Module, Parameter
+from function import Relu, Sigmoid, Softmax
 
 class ScalarLinear(Module):
     def __init__(self, in_feature:int, out_feature:int, bias:bool=True) -> None:
@@ -12,10 +13,10 @@ class ScalarLinear(Module):
         self.bias = bias
         for i in range(in_feature):
             for j in range(out_feature):
-                self.__dict__[f"w{i}{j}"] = Parameter(Scalar(random() - 1))
+                self.__dict__[f"w{i}{j}"] = Parameter(Scalar(random() - 0.5))
         if self.bias:
             for j in range(out_feature):
-                self.__dict__[f"b{j}"] = Parameter(Scalar(random() - 1))
+                self.__dict__[f"b{j}"] = Parameter(Scalar(random() - 0.5))
         return
     
     def forward(self, inputs:List[Scalar]) -> List[Scalar]:
@@ -31,15 +32,15 @@ class ScalarLinear(Module):
 class ScalarIrisClassifyModel(Module):
     def __init__(self) -> None:
         super().__init__()
-        self.lr1 = ScalarLinear(in_feature=4, out_feature=32)
-        self.lr2 = ScalarLinear(in_feature=32, out_feature=3)
+        self.lr1 = ScalarLinear(in_feature=2, out_feature=32)
+        self.lr2 = ScalarLinear(in_feature=32, out_feature=4)
         return
     
     def forward(self, inputs:List[Scalar]) -> List[Scalar]:
-        out:List[Scalar] = self.lr1(inputs)
-        for idx in range(len(out)):
-            out[idx] = out[idx].relu()
-        out:List[Scalar] = self.lr2(out)
+        out = self.lr1(inputs)
+        out = Sigmoid(out)
+        out = self.lr2(out)
+        out = Softmax(out)
         return out
     
 class GD():
@@ -55,5 +56,6 @@ class GD():
     
     def step(self) -> None:
         for parameter in self.parameters:
+            # print(parameter.value(), parameter.value()._gradient)
             parameter.value()._item -= self.lr * parameter.value()._gradient._item
         return
