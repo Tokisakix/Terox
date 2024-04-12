@@ -1,4 +1,4 @@
-from typing import Any, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 from .parameter import Parameter
 
@@ -17,7 +17,7 @@ class Module():
     def __call__(self, *args: Any, **kwds: Any) -> Any:
         return self.forward(*args, **kwds)
     
-    def getParmeterDict(self) -> dict:
+    def getParmeterDict(self) -> Dict[str, Parameter]:
         def getParmeterList(module:Module) -> List[Tuple[str, Parameter]]:
             parmeters = []
             for key in module.__dict__:
@@ -39,6 +39,27 @@ class Module():
         for key in parmeters_dict:
             parmeters.append(parmeters_dict[key])
         return parmeters 
+    
+    def __str__(self) -> str:
+        def _func(module:"Module", idx:int, arg:str) -> List[Tuple[int, str]]:
+            module_info = [(idx, f"{arg}{module.__class__.__name__}" + "{\n")]
+            for key in module.__dict__:
+                value = module.__dict__[key]
+                if isinstance(value, Module):
+                    sub_info = _func(value, idx + 1, f"{key}:")
+                    module_info += sub_info
+                if isinstance(value, Parameter):
+                    module_info.append((idx + 1, f"{key}:{value}\n"))
+            module_info.append((idx, "}\n"))
+            return module_info
+        module_info = _func(self, 0, "")
+        Info = "\n"
+        for info in module_info:
+            Info += " " * info[0] * 4 + info[1]
+        return Info
+    
+    def __repr__(self) -> str:
+        return self.__str__()
     
     def forward(self, *args: Any, **kwds: Any) -> Any:
         raise NotImplementedError

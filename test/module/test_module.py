@@ -35,3 +35,22 @@ def test_module_parmeter() -> None:
     assert m1.parmeters() == [p1, p2]
     assert m2.parmeters() == [p1, p2, p3]
     return
+
+@pytest.mark.test_module
+def test_module_repr() -> None:
+    assert str(m1) == """
+M1{
+    p1:<Parameter<Scalar(1.0), grad_fn=None, grad=True>>
+    p2:<Parameter<Scalar(2.0), grad_fn=None, grad=True>>
+}
+"""
+    assert str(m2) == """
+M2{
+    m1:M1{
+        p1:<Parameter<Scalar(1.0), grad_fn=None, grad=True>>
+        p2:<Parameter<Scalar(2.0), grad_fn=None, grad=True>>
+    }
+    p3:<Parameter<Scalar(3.0), grad_fn=None, grad=True>>
+}
+"""
+    return

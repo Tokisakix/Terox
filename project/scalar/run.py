@@ -6,13 +6,13 @@ from model import ScalarIrisClassifyModel, GD
 from dataset import getDataSet
 from function import MSELoss, argmax
 
-N      = 100
+N      = 10
 EPOCHS = 100
-LR     = 1e-3
+LR     = 0.5
 
 if __name__ == "__main__":
     dataset   = getDataSet(N)
-    model     = ScalarIrisClassifyModel()
+    model     = ScalarIrisClassifyModel(in_feature=2, hidden_feature=128, out_feature=4)
     criterion = MSELoss
     optimizer = GD(model.parmeters(), LR)
 
@@ -28,7 +28,6 @@ if __name__ == "__main__":
             Loss += loss.item()
             optimizer.step()
 
-            # print(argmax(outpus)[0], labels)
             Acc += 1 if argmax(outpus)[0] == labels else 0
         Loss /= len(dataset)
         Acc /= len(dataset)

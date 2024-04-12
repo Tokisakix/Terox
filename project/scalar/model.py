@@ -30,10 +30,10 @@ class ScalarLinear(Module):
         return out
 
 class ScalarIrisClassifyModel(Module):
-    def __init__(self) -> None:
+    def __init__(self, in_feature, hidden_feature, out_feature) -> None:
         super().__init__()
-        self.lr1 = ScalarLinear(in_feature=2, out_feature=32)
-        self.lr2 = ScalarLinear(in_feature=32, out_feature=4)
+        self.lr1 = ScalarLinear(in_feature, hidden_feature)
+        self.lr2 = ScalarLinear(hidden_feature, out_feature)
         return
     
     def forward(self, inputs:List[Scalar]) -> List[Scalar]:
