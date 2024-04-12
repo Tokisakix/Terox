@@ -24,11 +24,11 @@ def Softmax(inputs:List[Scalar]) -> List[Scalar]:
         out[idx] = inputs[idx].exp() / temp
     return out
 
-def MSELoss(inputs:List[Scalar], labels:int) -> Scalar:
+def MSELoss(inputs:List[Scalar], labels:List[Scalar]) -> Scalar:
     n = len(inputs)
     loss = Scalar(0.0)
     for idx in range(n):
-        temp = inputs[idx] - Scalar(1.0 if idx == labels else 0.0)
+        temp = inputs[idx] - labels[idx]
         loss += temp * temp / Scalar(2.0)
     loss /= Scalar(n)
     return loss

@@ -1,36 +1,45 @@
+from typing import List
 from tqdm import tqdm
 
 from terox.autodiff import Scalar
+from terox.module import Module
 
-from model import ScalarIrisClassifyModel, GD
+from model import ScalarIrisClassifyModel, SGD
 from dataset import getDataSet
-from function import MSELoss, argmax
+from function import MSELoss
 
-N      = 10
+N      = 1000
 EPOCHS = 100
-LR     = 0.5
+LR     = 5e-1
+
+def test(model:Module, dataset:List) -> float:
+    Acc = 0
+    for inputs, labels in tqdm(dataset):
+        inputs = [Scalar(num) for num in inputs]
+        outpus = model(inputs)
+        Acc += 1 if int(outpus[0].item() + 0.5) == labels else 0
+    acc = Acc / len(dataset)
+    return acc
 
 if __name__ == "__main__":
     dataset   = getDataSet(N)
-    model     = ScalarIrisClassifyModel(in_feature=2, hidden_feature=128, out_feature=4)
+    model     = ScalarIrisClassifyModel(in_feature=2, hidden_feature=16, out_feature=1)
     criterion = MSELoss
-    optimizer = GD(model.parmeters(), LR)
+    optimizer = SGD(model.parmeters(), LR)
 
     for epoch in range(EPOCHS):
         Loss = 0.0
-        Acc = 0
         for inputs, labels in tqdm(dataset):
             inputs = [Scalar(num) for num in inputs]
+            labels = [Scalar(labels)]
             outpus = model(inputs)
             optimizer.zero_grad()
             loss   = criterion(outpus, labels)
             loss.backward()
             Loss += loss.item()
             optimizer.step()
-
-            Acc += 1 if argmax(outpus)[0] == labels else 0
         Loss /= len(dataset)
-        Acc /= len(dataset)
+        Acc = test(model, dataset)
         print(f"[INFO] Epoch:{epoch} Loss:{Loss:.6f} Acc:{Acc * 100:.2f}%")
     
     print("Finished training!")
