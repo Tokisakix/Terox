@@ -67,7 +67,24 @@ test_function
 test_scalar
 test_scalar_opts
 test_scalar_overload
+test_backward
 
 # module test
 test_module
+```
+
+## 示范项目
+
+你可以在 `/project` 路径下找到附带的示范项目，里面演示了一些 **Terox** 的使用方式。
+
+你可以进入 `/project` 下的项目路径运行如下命令来运行示例代码:
+
+```Shell
+python run.py
+```
+
+目前提供的示例项目有:
+
+```
+scalar
 ```

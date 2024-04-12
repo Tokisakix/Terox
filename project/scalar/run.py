@@ -26,6 +26,7 @@ if __name__ == "__main__":
     model     = ScalarIrisClassifyModel(in_feature=2, hidden_feature=16, out_feature=1)
     criterion = MSELoss
     optimizer = SGD(model.parmeters(), LR)
+    print(f"[INFO] Start Acc:{test(model, dataset) * 100:.2f}%")
 
     for epoch in range(EPOCHS):
         Loss = 0.0
