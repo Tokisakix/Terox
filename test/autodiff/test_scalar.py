@@ -9,7 +9,7 @@ def test_scalar_init() -> None:
     b = Scalar(2.0)
     Add = VarFunction()
     history = VarHistory(Add, (a, b))
-    gradient = 1.0
+    gradient = Scalar(1.0, _require_grad=False)
     c = Scalar(3.0, history, gradient)
     assert c._parent() == [a, b]
     assert not c._is_leaf()

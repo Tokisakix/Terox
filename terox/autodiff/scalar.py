@@ -15,7 +15,7 @@ class Scalar(Variable):
         global scalar_count
         self._id = scalar_count
         scalar_count += 1
-        if _item == None:
+        if _item is None:
             _item = 0.0
         self._item = float(_item)
         self._backend = _backend
@@ -30,7 +30,7 @@ class Scalar(Variable):
         return
     
     def new(self, _item:float=None, _history:Optional[VarHistory]=None, _gradient:Optional["Scalar"]=None, _require_grad:bool=True) -> "Scalar":
-        if _item == None:
+        if _item is None:
             _item = 0.0
         _item = float(_item)
         res = Scalar(_item, _history, _gradient, _require_grad)
