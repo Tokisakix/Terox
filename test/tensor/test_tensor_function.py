@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 from numpy.typing import NDArray
 
-from terox.tensor.function import add, sub, mul, div, eq, lt, gt, abs, exp, log, relu
+from terox.tensor.function import add, sub, mul, matmul, div, eq, lt, gt, abs, exp, log, relu
 
 @pytest.mark.test_tensor_function
 def test_add(a:NDArray=np.array([1.0, 2.0, 3.0]), b:NDArray=np.array([2.0, 3.0, 4.0])) -> None:
@@ -22,6 +22,13 @@ def test_sub(a:NDArray=np.array([1.0, 2.0, 3.0]), b:NDArray=np.array([2.0, 3.0, 
 def test_mul(a:NDArray=np.array([1.0, 2.0, 3.0]), b:NDArray=np.array([2.0, 3.0, 4.0])) -> None:
     res = mul(a, b)
     ref = a * b
+    assert res.all() == ref.all()
+    return
+
+@pytest.mark.test_tensor_function
+def test_matmul(a:NDArray=np.array([[1.0, 2.0], [3.0, 4.0]]), b:NDArray=np.array([[2.0, 3.0], [4.0, 5.0]])) -> None:
+    res = matmul(a, b)
+    ref = a @ b
     assert res.all() == ref.all()
     return
 
