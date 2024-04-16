@@ -1,13 +1,14 @@
 from typing import Iterable
 
 from terox.autodiff.variable import Variable, VarHistory, VarFunction
-from .function import add, sub, mul, matmul, div, neg, eq, lt, gt, abs, exp, log, relu
+from .function import add, sub, mul, matmul, tranpose, div, neg, eq, lt, gt, abs, exp, log, relu
 
 class TensorOptsBackend():
     def __init__(self) -> None:
         self.Add:VarFunction = Add()
         self.Sub:VarFunction = Sub()
         self.Mul:VarFunction = Mul()
+        self.Tranpose:VarFunction = Tranpose()
         self.Matmul:VarFunction = Matmul()
         self.Div:VarFunction = Div()
         self.Neg:VarFunction = Neg()
@@ -35,7 +36,10 @@ class Add(VarFunction):
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
-        pass
+        (a, b) = args
+        a_grad = grad * grad.one(a.shape())
+        b_grad = grad * grad.one(b.shape())
+        return a_grad, b_grad
     
 class Sub(VarFunction):
     def __init__(self) -> None:
@@ -50,7 +54,10 @@ class Sub(VarFunction):
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
-        pass
+        (a, b) = args
+        a_grad = grad * grad.one(a.shape())
+        b_grad = grad * -grad.one(b.shape())
+        return a_grad, b_grad
     
 class Mul(VarFunction):
     def __init__(self) -> None:
@@ -65,7 +72,27 @@ class Mul(VarFunction):
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
-        pass
+        (a, b) = args
+        a_grad = grad * b
+        b_grad = grad * a
+        return a_grad, b_grad
+    
+class Tranpose(VarFunction):
+    def __init__(self) -> None:
+        super().__init__()
+        return
+    
+    def _forward(self, a:Variable) -> Variable:
+        _item = tranpose(a.item())
+        _require_grad = a.getRequireGrad()
+        _history = VarHistory(self, (a,)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
+        return res
+    
+    def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
+        (a,) = args
+        a_grad = grad.tranpose()
+        return a_grad
     
 class Matmul(VarFunction):
     def __init__(self) -> None:
@@ -80,7 +107,10 @@ class Matmul(VarFunction):
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
-        pass
+        (a, b) = args
+        a_grad = grad @ b.tranpose()
+        b_grad = a.tranpose() @ grad
+        return a_grad, b_grad
     
 class Div(VarFunction):
     def __init__(self) -> None:
@@ -95,7 +125,10 @@ class Div(VarFunction):
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
-        pass
+        (a, b) = args
+        a_grad = grad / b
+        b_grad = -grad / (b * b)
+        return a_grad, b_grad
     
 class Neg(VarFunction):
     def __init__(self) -> None:
@@ -110,7 +143,9 @@ class Neg(VarFunction):
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
-        pass
+        (a,) = args
+        a_grad = -grad
+        return a_grad,
     
 class Eq(VarFunction):
     def __init__(self) -> None:
@@ -125,7 +160,11 @@ class Eq(VarFunction):
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
-        pass
+        (a, b) = args
+        grad._item[a._item != b._item] = 0.0
+        a_grad = grad
+        b_grad = grad
+        return a_grad, b_grad
     
 class Lt(VarFunction):
     def __init__(self) -> None:
@@ -140,7 +179,10 @@ class Lt(VarFunction):
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
-        pass
+        (a, b) = args
+        a_grad = grad.zero(a.shape())
+        b_grad = grad.zero(b.shape())
+        return a_grad, b_grad
     
 class Gt(VarFunction):
     def __init__(self) -> None:
@@ -155,7 +197,10 @@ class Gt(VarFunction):
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
-        pass
+        (a, b) = args
+        a_grad = grad.zero(a.shape())
+        b_grad = grad.zero(b.shape())
+        return a_grad, b_grad
     
 class Abs(VarFunction):
     def __init__(self) -> None:
@@ -170,7 +215,10 @@ class Abs(VarFunction):
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
-        pass
+        (a,) = args
+        grad[a._item < 0.0] = -grad[a._item < 0.0]
+        a_grad = grad
+        return a_grad,
     
 class Exp(VarFunction):
     def __init__(self) -> None:
@@ -185,7 +233,9 @@ class Exp(VarFunction):
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
-        pass
+        (a,) = args
+        a_grad = grad * a.exp()
+        return a_grad,
     
 class Log(VarFunction):
     def __init__(self) -> None:
@@ -200,7 +250,9 @@ class Log(VarFunction):
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
-        pass
+        (a,) = args
+        a_grad = grad / a
+        return a_grad,
     
 class Relu(VarFunction):
     def __init__(self) -> None:
@@ -215,7 +267,10 @@ class Relu(VarFunction):
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
-        pass
+        (a,) = args
+        grad[a._item <= 0.0] = 0.0
+        a_grad = grad
+        return a_grad,
     
 class Sigmoid(VarFunction):
     def __init__(self) -> None:
@@ -230,7 +285,10 @@ class Sigmoid(VarFunction):
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
-        pass
+        (a,) = args
+        sigmoid = 1.0 / (1.0 + exp(a.item()))
+        a_grad = grad * grad.new(sigmoid * (1.0 - sigmoid))
+        return a_grad,
     
 class Tanh(VarFunction):
     def __init__(self) -> None:
@@ -245,4 +303,7 @@ class Tanh(VarFunction):
         return res
     
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
-        pass
+        (a,) = args
+        tanh = (exp(a.item())) - exp(-a.item()) / (exp(a.item()) + exp(-a.item()))
+        a_grad = grad * grad.new(1.0 - tanh * tanh)
+        return a_grad,

@@ -19,6 +19,8 @@ class Tensor(Variable):
         tensor_count += 1
         if _item is None:
             _item = [0.0]
+        if isinstance(_item, (int, float)):
+            _item = [_item]
         self._item = np.array(list(_item))
         self._backend = _backend
         return
@@ -34,6 +36,8 @@ class Tensor(Variable):
     def new(self, _item:Iterable=None, _history:Optional[VarHistory]=None, _gradient:Optional["Tensor"]=None, _require_grad:bool=True) -> "Tensor":
         if _item is None:
             _item = [0.0]
+        if isinstance(_item, (int, float)):
+            _item = [_item]
         _item = np.array(list(_item))
         res = Tensor(_item, _history, _gradient, _require_grad)
         return res
@@ -90,6 +94,12 @@ class Tensor(Variable):
     
     def __mul__(self, b:"Tensor") -> "Tensor":
         return self._backend.Mul(self, b)
+    
+    def tranpose(self) -> "Tensor":
+        return self._backend.Tranpose(self)
+    
+    def __matmul__(self, b:"Tensor") -> "Tensor":
+        return self._backend.Matmul(self, b)
     
     def __truediv__(self, b:"Tensor") -> "Tensor":
         return self._backend.Div(self, b)

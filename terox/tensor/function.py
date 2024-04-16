@@ -13,6 +13,10 @@ def mul(a:NDArray, b:NDArray) -> NDArray:
     res = a * b
     return res
 
+def tranpose(a:NDArray) -> NDArray:
+    res = a.transpose()
+    return res
+
 def matmul(a:NDArray, b:NDArray) -> NDArray:
     res = a @ b
     return res
