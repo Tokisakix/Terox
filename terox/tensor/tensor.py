@@ -66,8 +66,16 @@ class Tensor(Variable):
         return self._item.shape
     
     def reshape(self, _shape:Iterable) -> "Tensor":
-        self._item = self._item.reshape(_shape)
-        return self
+        return self._backend.Reshape(self, _shape)
+    
+    def permute(self, order:Iterable) -> "Tensor":
+        return self._backend.Permute(self, order)
+    
+    def sum(self, dim) -> "Tensor":
+        return self._backend.Sum(self, dim)
+    
+    def mean(self, dim) -> "Tensor":
+        return self._backend.Mean(self, dim)
     
     def __str__(self) -> str:
         info = f"<{self.__class__.__name__}({self._item}), grad_fn="

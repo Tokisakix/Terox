@@ -1,6 +1,8 @@
 import numpy as np
 from numpy.typing import NDArray
 
+from typing import Iterable
+
 def add(a:NDArray, b:NDArray) -> NDArray:
     res = a + b
     return res
@@ -59,4 +61,12 @@ def log(a:NDArray) -> NDArray:
 def relu(a:NDArray) -> NDArray:
     res = np.copy(a)
     res[a <= 0.0] = 0.0
+    return res
+
+def reshape(a:NDArray, _shape:Iterable) -> NDArray:
+    res = np.reshape(a, _shape)
+    return res
+
+def permute(a:NDArray, order:Iterable) -> NDArray:
+    res = np.transpose(a, order)
     return res

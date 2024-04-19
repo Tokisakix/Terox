@@ -3,7 +3,7 @@ import numpy as np
 from numpy.typing import NDArray
 
 from terox.tensor.tensor import Tensor
-from terox.tensor.tensor_opts import TensorOptsBackend
+from terox.tensor.tensor_opts import Mean, Permute, Reshape, Sum, TensorOptsBackend
 from terox.tensor.tensor_opts import Add, Sub, Mul, Div, Neg, Eq, Lt, Gt, Abs, Exp, Log, Relu, Sigmoid, Tanh
 
 Tensor_opts_backend = TensorOptsBackend()
@@ -209,5 +209,57 @@ def test_tanh(a:NDArray=[[-1.0, -2.0], [-3.0, -4.0]]) -> None:
     A = Tensor(a, _require_grad=False)
     C = Tensor_opts_backend.Tanh(A)
     assert ((np.exp(A.item()) - np.exp(-A.item())) / (np.exp(A.item()) + np.exp(-A.item()))).all() == C.item().all()
+    assert C._history == None
+    return
+
+@pytest.mark.test_tensor_opts
+def test_reshape(a:NDArray=[[-1.0, -2.0], [-3.0, -4.0]]) -> None:
+    A = Tensor(a)
+    C = Tensor_opts_backend.Reshape(A, (4, 1))
+    assert Tensor([[-1.0], [-2.0], [-3.0], [-4.0]]).item().all() == C.item().all()
+    assert C._history._func.__class__ == Reshape
+    assert C._history._args == (A,)
+    A = Tensor(a, _require_grad=False)
+    C = Tensor_opts_backend.Reshape(A, (4, 1))
+    assert Tensor([[-1.0], [-2.0], [-3.0], [-4.0]]).item().all() == C.item().all()
+    assert C._history == None
+    return
+
+@pytest.mark.test_tensor_opts
+def test_permute(a:NDArray=[[-1.0, -2.0, -3.0, -4.0]]) -> None:
+    A = Tensor(a)
+    C = Tensor_opts_backend.Permute(A, (0, 1))
+    assert Tensor([[-1.0], [-2.0], [-3.0], [-4.0]]).item().all() == C.item().all()
+    assert C._history._func.__class__ == Permute
+    assert C._history._args == (A,)
+    A = Tensor(a, _require_grad=False)
+    C = Tensor_opts_backend.Permute(A, (0, 1))
+    assert Tensor([[-1.0], [-2.0], [-3.0], [-4.0]]).item().all() == C.item().all()
+    assert C._history == None
+    return
+
+@pytest.mark.test_tensor_opts
+def test_sum(a:NDArray=[[-1.0, -2.0], [-3.0, -4.0]]) -> None:
+    A = Tensor(a)
+    C = Tensor_opts_backend.Sum(A, 1)
+    assert Tensor([[-4.0], [-6.0]]).item().all() == C.item().all()
+    assert C._history._func.__class__ == Sum
+    assert C._history._args == (A,)
+    A = Tensor(a, _require_grad=False)
+    C = Tensor_opts_backend.Sum(A, 1)
+    assert Tensor([[-4.0], [-6.0]]).item().all() == C.item().all()
+    assert C._history == None
+    return
+
+@pytest.mark.test_tensor_opts
+def test_mean(a:NDArray=[[-1.0, -2.0], [-3.0, -4.0]]) -> None:
+    A = Tensor(a)
+    C = Tensor_opts_backend.Mean(A, 1)
+    assert Tensor([[-2.0], [-3.0]]).item().all() == C.item().all()
+    assert C._history._func.__class__ == Mean
+    assert C._history._args == (A,)
+    A = Tensor(a, _require_grad=False)
+    C = Tensor_opts_backend.Mean(A, 1)
+    assert Tensor([[-2.0], [-3.0]]).item().all() == C.item().all()
     assert C._history == None
     return

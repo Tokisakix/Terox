@@ -1,7 +1,7 @@
 from typing import Iterable
 
 from terox.autodiff.variable import Variable, VarHistory, VarFunction
-from .function import add, sub, mul, matmul, tranpose, div, neg, eq, lt, gt, abs, exp, log, relu
+from .function import add, sub, mul, matmul, tranpose, div, neg, eq, lt, gt, abs, exp, log, relu, permute, reshape
 
 class TensorOptsBackend():
     def __init__(self) -> None:
@@ -21,6 +21,10 @@ class TensorOptsBackend():
         self.Relu:VarFunction = Relu()
         self.Sigmoid:VarFunction = Sigmoid()
         self.Tanh:VarFunction = Tanh()
+        self.Reshape:VarFunction = Reshape()
+        self.Permute:VarFunction = Permute()
+        self.Sum:VarFunction = Sum()
+        self.Mean:VarFunction = Mean()
         return
     
 class Add(VarFunction):
@@ -306,4 +310,73 @@ class Tanh(VarFunction):
         (a,) = args
         tanh = (exp(a.item())) - exp(-a.item()) / (exp(a.item()) + exp(-a.item()))
         a_grad = grad * grad.new(1.0 - tanh * tanh)
+        return a_grad,
+    
+class Reshape(VarFunction):
+    def __init__(self) -> None:
+        super().__init__()
+        return
+    
+    def _forward(self, a:Variable, _shape:Iterable) -> Variable:
+        _item = reshape(a._item, _shape)
+        _require_grad = a.getRequireGrad()
+        _history = VarHistory(self, (a,)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
+        return res
+    
+    def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
+        (a,) = args
+        a_grad = grad.reshape(a.shape())
+        return a_grad,
+    
+class Permute(VarFunction):
+    def __init__(self) -> None:
+        super().__init__()
+        return
+    
+    def _forward(self, a:Variable, order:Iterable) -> Variable:
+        self.order = [order[i] for i in order]
+        _item = permute(a._item, order)
+        _require_grad = a.getRequireGrad()
+        _history = VarHistory(self, (a,)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
+        return res
+    
+    def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
+        (a,) = args
+        a_grad = grad.permute(self.order)
+        return a_grad,
+    
+class Sum(VarFunction):
+    def __init__(self) -> None:
+        super().__init__()
+        return
+    
+    def _forward(self, a:Variable, dim:int) -> Variable:
+        _item = a._item.sum(dim)
+        _require_grad = a.getRequireGrad()
+        _history = VarHistory(self, (a,)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
+        return res
+    
+    def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
+        (a,) = args
+        a_grad = grad.zero(a.shape()) + grad
+        return a_grad,
+    
+class Mean(VarFunction):
+    def __init__(self) -> None:
+        super().__init__()
+        return
+    
+    def _forward(self, a:Variable, dim:int) -> Variable:
+        _item = a._item.mean(dim)
+        _require_grad = a.getRequireGrad()
+        _history = VarHistory(self, (a,)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
+        return res
+    
+    def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
+        (a,) = args
+        a_grad = grad.zero(a.shape()) + grad
         return a_grad,

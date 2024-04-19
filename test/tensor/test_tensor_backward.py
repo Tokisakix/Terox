@@ -146,6 +146,38 @@ def test_tanh_backward(a:NDArray=[[-1.0, -2.0], [-3.0, -4.0]]) -> None:
     return
 
 @pytest.mark.test_tensor_backward
+def test_reshape_backward(a:NDArray=[[-1.0, -2.0], [-3.0, -4.0]]) -> None:
+    A = Tensor(a)
+    C = A.reshape((4, 1))
+    C.backward()
+    assert TensorEq(A._gradient, C.new([[1.0], [1.0], [1.0], [1.0]]))
+    return
+
+@pytest.mark.test_tensor_backward
+def test_permute_backward(a:NDArray=[[-1.0, -2.0], [-3.0, -4.0]]) -> None:
+    A = Tensor(a)
+    C = A.permute((0, 1))
+    C.backward()
+    assert TensorEq(A._gradient, C.new([[1.0], [1.0], [1.0], [1.0]]))
+    return
+
+@pytest.mark.test_tensor_backward
+def test_sum_backward(a:NDArray=[[-1.0, -2.0], [-3.0, -4.0]]) -> None:
+    A = Tensor(a)
+    C = A.sum(1)
+    C.backward()
+    assert TensorEq(A._gradient, C.new([[1.0, 1.0], [1.0, 1.0]]))
+    return
+
+@pytest.mark.test_tensor_backward
+def test_mean_backward(a:NDArray=[[-1.0, -2.0], [-3.0, -4.0]]) -> None:
+    A = Tensor(a)
+    C = A.mean(1)
+    C.backward()
+    assert TensorEq(A._gradient, C.new([[1.0, 1.0], [1.0, 1.0]]))
+    return
+
+@pytest.mark.test_tensor_backward
 def test_complex_backward() -> None:
     A = Tensor([[1.0, 2.0], [3.0, 4.0]])
     B = Tensor([[2.0, 3.0], [4.0, 5.0]])
