@@ -34,7 +34,7 @@ class ScalarIrisClassifyModel(Module):
         out = out.sigmoid()
         return out
     
-class SGD():
+class GD():
     def __init__(self, parameters:List[Parameter], lr:float) -> None:
         self.parameters = parameters
         self.lr = lr

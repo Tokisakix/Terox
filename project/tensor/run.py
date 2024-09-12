@@ -4,7 +4,7 @@ from tqdm import tqdm
 from terox.tensor import Tensor
 from terox.module import Module
 
-from model import ScalarIrisClassifyModel, SGD
+from model import ScalarIrisClassifyModel, GD
 from dataset import getDataSet
 from function import MSELoss
 
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     dataset   = getDataSet(N)
     model     = ScalarIrisClassifyModel(in_feature=2, hidden_feature=128, out_feature=1)
     criterion = MSELoss
-    optimizer = SGD(model.parmeters(), LR)
+    optimizer = GD(model.parmeters(), LR)
     print(f"[INFO] Start Acc:{test(model, dataset) * 100:.2f}%")
 
     for epoch in range(EPOCHS):
