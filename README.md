@@ -11,7 +11,7 @@ Terox is a tiny Python package that provides some features:
 - [x] Provides convenient tensor calculation.
 - [x] Control the parameters and the model.
 - [ ] Provides common computing functions for deep learning.
-- [ ] Provides common deep learning components.
+- [x] Provides common deep learning components.
 - [x] Provides deep learning model optimizer.
 - [ ] Accelerate computing on CPU and GPU.
 - [ ] Support distributed computing.
