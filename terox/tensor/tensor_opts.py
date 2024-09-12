@@ -392,7 +392,7 @@ class Conv1d(VarFunction):
     def _forward(self, a:Variable, w:Variable, stride:int, padding:int) -> Variable:
         _item = conv1d_forward(a._item, w._item, stride, padding)
         _require_grad = a.getRequireGrad()
-        _history = VarHistory(self, (a,)) if _require_grad else None
+        _history = VarHistory(self, (a, w, stride, padding)) if _require_grad else None
         res = a.new(_item, _history, None, _require_grad)
         return res
     
@@ -411,7 +411,7 @@ class Conv2d(VarFunction):
     def _forward(self, a:Variable, w:Variable, stride:int, padding:int) -> Variable:
         _item = conv2d_forward(a._item, w._item, stride, padding)
         _require_grad = a.getRequireGrad()
-        _history = VarHistory(self, (a,)) if _require_grad else None
+        _history = VarHistory(self, (a, w, stride, padding)) if _require_grad else None
         res = a.new(_item, _history, None, _require_grad)
         return res
     
@@ -430,7 +430,7 @@ class Conv3d(VarFunction):
     def _forward(self, a:Variable, w:Variable, stride:int, padding:int) -> Variable:
         _item = conv3d_forward(a._item, w._item, stride, padding)
         _require_grad = a.getRequireGrad()
-        _history = VarHistory(self, (a,)) if _require_grad else None
+        _history = VarHistory(self, (a, w, stride, padding)) if _require_grad else None
         res = a.new(_item, _history, None, _require_grad)
         return res
     
