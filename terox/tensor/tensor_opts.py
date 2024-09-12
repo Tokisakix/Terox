@@ -1,7 +1,7 @@
 from typing import Iterable
 
 from terox.autodiff.variable import Variable, VarHistory, VarFunction
-from .function import add, sub, mul, matmul, tranpose, div, neg, eq, lt, gt, abs, exp, log, relu, permute, reshape
+from .function import add, sub, mul, matmul, tranpose, div, neg, eq, lt, gt, abs, exp, log, relu, permute, reshape, conv1d_forward, conv1d_backward, conv2d_forward, conv2d_backward, conv3d_forward, conv3d_backward
 
 class TensorOptsBackend():
     def __init__(self) -> None:
@@ -25,6 +25,9 @@ class TensorOptsBackend():
         self.Permute:VarFunction = Permute()
         self.Sum:VarFunction = Sum()
         self.Mean:VarFunction = Mean()
+        self.Conv1d:VarFunction = Conv1d()
+        self.Conv2d:VarFunction = Conv2d()
+        self.Conv3d:VarFunction = Conv3d()
         return
     
 class Add(VarFunction):
@@ -380,3 +383,60 @@ class Mean(VarFunction):
         (a,) = args
         a_grad = grad.zero(a.shape()) + grad
         return a_grad,
+    
+class Conv1d(VarFunction):
+    def __init__(self) -> None:
+        super().__init__()
+        return
+    
+    def _forward(self, a:Variable, w:Variable, stride:int, padding:int) -> Variable:
+        _item = conv1d_forward(a._item, w._item, stride, padding)
+        _require_grad = a.getRequireGrad()
+        _history = VarHistory(self, (a,)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
+        return res
+    
+    def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
+        (a, w, stride, padding) = args
+        (a_grad, w_grad) = conv1d_backward(a._item, w._item, stride, padding, grad)
+        a_grad = grad.new(a_grad)
+        w_grad = grad.new(w_grad)
+        return a_grad, w_grad
+    
+class Conv2d(VarFunction):
+    def __init__(self) -> None:
+        super().__init__()
+        return
+    
+    def _forward(self, a:Variable, w:Variable, stride:int, padding:int) -> Variable:
+        _item = conv2d_forward(a._item, w._item, stride, padding)
+        _require_grad = a.getRequireGrad()
+        _history = VarHistory(self, (a,)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
+        return res
+    
+    def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
+        (a, w, stride, padding) = args
+        (a_grad, w_grad) = conv2d_backward(a._item, w._item, stride, padding, grad)
+        a_grad = grad.new(a_grad)
+        w_grad = grad.new(w_grad)
+        return a_grad, w_grad
+    
+class Conv3d(VarFunction):
+    def __init__(self) -> None:
+        super().__init__()
+        return
+    
+    def _forward(self, a:Variable, w:Variable, stride:int, padding:int) -> Variable:
+        _item = conv3d_forward(a._item, w._item, stride, padding)
+        _require_grad = a.getRequireGrad()
+        _history = VarHistory(self, (a,)) if _require_grad else None
+        res = a.new(_item, _history, None, _require_grad)
+        return res
+    
+    def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
+        (a, w, stride, padding) = args
+        (a_grad, w_grad) = conv3d_backward(a._item, w._item, stride, padding, grad)
+        a_grad = grad.new(a_grad)
+        w_grad = grad.new(w_grad)
+        return a_grad, w_grad
