@@ -27,6 +27,7 @@ class TensorOptsBackend():
         self.Permute:VarFunction = Permute()
         self.Sum:VarFunction = Sum()
         self.Mean:VarFunction = Mean()
+        self.Softmax:VarFunction = Softmax()
         self.Conv1d:VarFunction = Conv1d()
         self.Conv2d:VarFunction = Conv2d()
         self.Conv3d:VarFunction = Conv3d()
@@ -384,6 +385,25 @@ class Mean(VarFunction):
     def _backward(self, grad:Variable, args: Iterable[Variable]) -> Iterable[Variable]:
         (a,) = args
         a_grad = grad.zero(a.shape()) + grad
+        return a_grad,
+    
+class Softmax(VarFunction):
+    def __init__(self) -> None:
+        super().__init__()
+
+    def _forward(self, a: Variable, dim: int) -> Variable:
+        _item = a._item - a._item.max(dim, keepdim=True)[0]
+        exp_item = _item.exp()
+        softmax_item = exp_item / exp_item.sum(dim, keepdim=True)
+        _require_grad = a.getRequireGrad()
+        _history = VarHistory(self, (a,)) if _require_grad else None
+        res = a.new(softmax_item, _history, None, _require_grad)
+        return res
+
+    def _backward(self, grad: Variable, args: Iterable[Variable]) -> Iterable[Variable]:
+        (a,) = args
+        softmax_a = self._forward(a, dim=0)  # Assume dim=0 for simplicity
+        a_grad = softmax_a * (grad - (softmax_a * grad.sum(dim=0, keepdim=True)))
         return a_grad,
     
 class Conv1d(VarFunction):

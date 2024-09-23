@@ -77,6 +77,9 @@ class Tensor(Variable):
     def mean(self, dim) -> "Tensor":
         return self._backend.Mean(self, dim)
     
+    def softmax(self, dim) -> "Tensor":
+        return self._backend.Softmax(self, dim)
+    
     def __str__(self) -> str:
         info = f"<{self.__class__.__name__}({self._item}), grad_fn="
         info += f"None" if self._history == None else f"{self._history._func.__class__.__name__}"
