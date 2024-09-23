@@ -3,3 +3,8 @@
 .pytest_cache/
 
 terox.egg-info/
+
+build/
+
+cpp_function.*.so
+cuda_function.*.so
