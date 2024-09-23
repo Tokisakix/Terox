@@ -240,7 +240,7 @@ std::tuple<py::array_t<double>, py::array_t<double>> conv2d_backward(py::array_t
 }
 
 PYBIND11_MODULE(cuda_function, m) {
-    m.def("matmul", &matmul_cuda, "CUDA tensor.matmul()");
-    m.def("conv2d_forward", &conv2d_forward, "CUDA tensor.conv2d()");
-    m.def("conv2d_backward", &conv2d_backward, "CUDA tensor.conv2d()");
+    m.def("cuda_matmul", &matmul_cuda, "CUDA tensor.matmul()");
+    m.def("cuda_conv2d_forward", &conv2d_forward, "CUDA tensor.conv2d()");
+    m.def("cuda_conv2d_backward", &conv2d_backward, "CUDA tensor.conv2d()");
 }

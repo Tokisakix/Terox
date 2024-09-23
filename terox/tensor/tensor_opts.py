@@ -2,6 +2,8 @@ from typing import Iterable
 
 from terox.autodiff.variable import Variable, VarHistory, VarFunction
 from .function import add, sub, mul, matmul, tranpose, div, neg, eq, lt, gt, abs, exp, log, relu, permute, reshape, conv1d_forward, conv1d_backward, conv2d_forward, conv2d_backward, conv3d_forward, conv3d_backward
+# from terox._C import cpp_matmul, cpp_conv2d_forward, cpp_conv2d_backward
+# from terox._C import cuda_matmul, cuda_conv2d_forward, cuda_conv2d_backward
 
 class TensorOptsBackend():
     def __init__(self) -> None:
