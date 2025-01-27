@@ -3,4 +3,7 @@
 *.pyc
 *.so
 
+dist/
+*.egg-info/
+
 build/

@@ -18,4 +18,4 @@ file(GLOB SOURCES
 
 pybind11_add_module(_C ${SOURCES})
 
-install(TARGETS _C DESTINATION ${CMAKE_SOURCE_DIR}/terox/)
+install(TARGETS _C DESTINATION ${CMAKE_SOURCE_DIR}/src/terox/)
