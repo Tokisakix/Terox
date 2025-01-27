@@ -32,6 +32,7 @@ jobs:
       - name: Build release distributions
         run: |
           cd ..
+          git submodule update
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
           cd build && make install
           python -m build
