@@ -1,0 +1,90 @@
+# This workflow will upload a Python Package to PyPI when a release is created
+# It builds and publishes packages for Python 3.8 to 3.12.
+
+name: Upload Python Package
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build cmake
+
+      - name: Build release distributions
+        run: |
+          cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+          cd build && make install
+          python -m build
+
+      - name: Upload distributions
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-dists-${{ matrix.python-version }}
+          path: dist/
+
+  pypi-publish:
+    runs-on: ubuntu-latest
+    needs:
+      - release-build
+    permissions:
+      # Mandatory for trusted publishing
+      id-token: write
+
+    environment:
+      name: pypi
+      url: https://pypi.org/project/Terox/
+
+    steps:
+      - name: Retrieve release distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: release-dists-3.8
+          path: dist/3.8/
+
+      - name: Retrieve release distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: release-dists-3.9
+          path: dist/3.9/
+
+      - name: Retrieve release distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: release-dists-3.10
+          path: dist/3.10/
+
+      - name: Retrieve release distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: release-dists-3.11
+          path: dist/3.11/
+
+      - name: Retrieve release distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: release-dists-3.12
+          path: dist/3.12/
+
+      - name: Publish release distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/
