@@ -31,7 +31,7 @@ jobs:
 
       - name: Build release distributions
         run: |
-          git submodule update
+          git submodule update --remote --recursive
           cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
           cd build && make install
           python -m build
